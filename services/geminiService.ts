@@ -72,7 +72,7 @@ You must only output a single, valid JSON object and nothing else. Ensure the pr
 
 const generateLogoImage = async (prompt: string): Promise<string> => {
     const response = await ai.models.generateImages({
-        model: 'imagen-3.0-generate-002',
+        model: 'gemini-2.0-flash-preview-image-generation', // imagen-3.0-generate-002
         prompt: prompt,
         config: { numberOfImages: 1, outputMimeType: 'image/png' },
     });
