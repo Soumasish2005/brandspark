@@ -1,4 +1,3 @@
-
 import { GoogleGenAI, GenerateContentResponse } from "@google/genai";
 import type { LogoDetails, LogoResult } from '../types';
 
@@ -71,18 +70,28 @@ You must only output a single, valid JSON object and nothing else. Ensure the pr
 };
 
 const generateLogoImage = async (prompt: string): Promise<string> => {
-    const response = await ai.models.generateImages({
-        model: 'gemini-2.0-flash-preview-image-generation', // imagen-3.0-generate-002
-        prompt: prompt,
-        config: { numberOfImages: 1, outputMimeType: 'image/png' },
+    const contents = [
+        { role: "user", parts: [{ text: prompt }] }
+    ];
+    const response = await ai.models.generateContent({
+        model: "gemini-2.0-flash-preview-image-generation",
+        contents: contents,
+        config: {
+            responseModalities: ["TEXT", "IMAGE"],
+        },
     });
-
-    if (response.generatedImages && response.generatedImages.length > 0) {
-        const base64ImageBytes: string = response.generatedImages[0].image.imageBytes;
-        return `data:image/png;base64,${base64ImageBytes}`;
-    } else {
-        throw new Error("Image generation failed. The AI couldn't visualize the logo. Please try again.");
+    // Find the image part in the response
+    const candidates = response.candidates || [];
+    if (candidates.length === 0 || !candidates[0].content || !candidates[0].content.parts) {
+        throw new Error("Image generation failed. No candidates returned.");
     }
+    for (const part of candidates[0].content.parts) {
+        if (part.inlineData && part.inlineData.data) {
+            // Return as data URL
+            return `data:image/png;base64,${part.inlineData.data}`;
+        }
+    }
+    throw new Error("Image generation failed. The AI couldn't visualize the logo. Please try again.");
 };
 
 export const generateLogo = async (details: LogoDetails): Promise<LogoResult> => {
