@@ -1,0 +1,5 @@
+{
+  "name": "BrandSpark",
+  "description": "An application that uses AI to generate unique logos and branding descriptions for businesses, projects, and teams. Users provide details and receive a custom logo created by Imagen and a tagline by Gemini.",
+  "requestFramePermissions": []
+}
