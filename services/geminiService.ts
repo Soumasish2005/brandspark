@@ -78,7 +78,7 @@ const generateLogoImage = async (prompt: string): Promise<string> => {
         contents: contents,
         config: {
             responseModalities: ["TEXT", "IMAGE"],
-        },
+        }
     });
     // Find the image part in the response
     const candidates = response.candidates || [];
